@@ -1,5 +1,3 @@
-# deep_meme_clustering
-
 ![Info graphic](assets/deep-meme-clustering.png)
 
 ## Some results
