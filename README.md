@@ -1,2 +1,11 @@
 # deep_meme_clustering
-A deep convolutional neural network pipeline for unsupervised meme clustering
+
+![Info graphic](assets/deep-meme-clustering.png)
+
+## Some results
+
+![graphic](assets/america.jpg)
+![graphic](assets/drake.jpg)
+![graphic](assets/isthis.jpg)
+![graphic](assets/woke.jpg)
+![graphic](assets/comic.jpg)
