@@ -22,11 +22,15 @@ def is_image(filename):
 
 def return_phash(filename):
 	hashfunc = imagehash.phash
-
-	img = Image.open(filename)
-	if img is not None:
-		img_hash = hashfunc(img, hash_size=12) # phash
-		#img_hash = hashfunc(img, hash_size=4) # whash
+	try:
+		img = Image.open(filename)
+		if img is not None:
+			img_hash = hashfunc(img, hash_size=12) # phash
+			#img_hash = hashfunc(img, hash_size=4) # whash
+	except:
+		print('Cannot determine PHash of {}! Not an image?'.format(filename))
+		img_hash = '0000'
+		pass
 	return img_hash
 
 def return_phashes(files):

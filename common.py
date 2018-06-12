@@ -57,28 +57,33 @@ def crop_images(df, imagedir, size):
     if 'cropped_filename' not in df:
         df['cropped_filename'] = None
     for file in tqdm(df.index, total=len(df.index)):
-        pil_img=Image.open(df.loc[file]['filename'])
-        fhash = df.loc[file]['hash']
-        cropped_fname = os.path.join(imagedir, 'cropped/', fhash + '.jpg')
+        original_filename = df.loc[file]['filename']
+        try: 
+            pil_img=Image.open(original_filename)
+            pil_img = pil_img.convert('RGB') 
+            fhash = df.loc[file]['hash']
+            cropped_fname = os.path.join(imagedir, 'cropped/', fhash + '.jpg')
 
-        pil_img.thumbnail((size, size), Image.ANTIALIAS)
-        img = np.array(pil_img)
-        origimg = img.copy()
-        croplines_x, croplines_y = get_crop_bbox(img)
+            pil_img.thumbnail((size, size), Image.ANTIALIAS)
+            img = np.array(pil_img)
+            origimg = img.copy()
+            croplines_x, croplines_y = get_crop_bbox(img)
 
-        w, h = pil_img.size
-        if len(croplines_x) is not 2: 
-            croplines_x = [0, w]
-            print("couldn't crop {} in x-axis".format(file))
-        if len(croplines_y) is not 2: 
-            croplines_y = [0, h]
-            print("couldn't crop {} in y-axis".format(file))
+            w, h = pil_img.size
+            if len(croplines_x) is not 2: 
+                croplines_x = [0, w]
+                print("couldn't crop {} in x-axis".format(file))
+            if len(croplines_y) is not 2: 
+                croplines_y = [0, h]
+                print("couldn't crop {} in y-axis".format(file))
 
-        #plot_croplines(croplines_x, croplines_y, img)    
-        pil_img = pil_img.crop((croplines_x[0], croplines_y[0], croplines_x[1], croplines_y[1]))
-        pil_img = pil_img.convert('RGB') 
-
-        pil_img.save(cropped_fname)
+            #plot_croplines(croplines_x, croplines_y, img)    
+            pil_img = pil_img.crop((croplines_x[0], croplines_y[0], croplines_x[1], croplines_y[1]))
+            pil_img.save(cropped_fname)
+        except:
+            print("Couldn't crop {}, dropping file from table".format(original_filename))
+            df = df.drop(file)
+            continue
 
         df.loc[file]['cropped_filename'] = cropped_fname
 
