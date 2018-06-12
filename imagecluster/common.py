@@ -34,3 +34,39 @@ def rename_files(files, imagedir):
 		os.rename(fromfile, tofile)
 	return newfiles, hashes
 
+
+def crop_images(df):
+    cropped_folder = os.path.join(imagedir, 'cropped/')
+    if not os.path.exists(cropped_folder):
+        os.makedirs(os.path.dirname(cropped_folder), exist_ok=True)
+    if 'cropped_filename' not in df:
+        df['cropped_filename'] = None
+    for file in tqdm(df.index, total=len(df.index)):
+        pil_img=Image.open(df.loc[file]['filename'])
+        fhash = df.loc[file]['hash']
+        cropped_fname = os.path.join(imagedir, 'cropped/', fhash + '.jpg')
+
+        pil_img.thumbnail((input_size, input_size), Image.ANTIALIAS)
+        img = np.array(pil_img)
+        origimg = img.copy()
+        croplines_x, croplines_y = get_crop_bbox(img)
+
+        w, h = pil_img.size
+        if len(croplines_x) is not 2: 
+            croplines_x = [0, w]
+            print("couldn't crop {} in x-axis".format(file))
+        if len(croplines_y) is not 2: 
+            croplines_y = [0, h]
+            print("couldn't crop {} in y-axis".format(file))
+
+        #plot_croplines(croplines_x, croplines_y, img)    
+        pil_img = pil_img.crop((croplines_x[0], croplines_y[0], croplines_x[1], croplines_y[1]))
+        pil_img = pil_img.convert('RGB') 
+
+        pil_img.save(cropped_fname)
+
+        df.loc[file]['cropped_filename'] = cropped_fname
+
+        #plt.imshow(pil_img)
+        #plt.show()
+    return df

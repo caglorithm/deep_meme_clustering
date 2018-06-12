@@ -1,5 +1,8 @@
 ![Info graphic](assets/deep-meme-clustering.png)
 
+## Dependencies
+Depends these python packages: numpy, pickle, tqdm, imagehash, hashlib, PIL, keras (tested only with tensorflow)
+
 ## Some results
 
 ![graphic](assets/america.jpg)
