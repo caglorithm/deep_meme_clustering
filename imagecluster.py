@@ -20,7 +20,7 @@ from keras.applications.resnet50 import ResNet50
 
 from keras.models import Model
 
-from imagecluster import common as co
+import common as co
 
 pj = os.path.join
 

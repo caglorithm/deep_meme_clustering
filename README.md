@@ -1,7 +1,14 @@
+About
+=====
 ![Info graphic](assets/deep-meme-clustering.png)
 
-## Dependencies
-Depends these python packages: `numpy, pickle, tqdm, imagehash, hashlib, PIL, keras` (tested only with tensorflow)
+Credit
+=====
+Core code is based on https://github.com/elcorto/imagecluster
+
+Usage
+=====
+Depends these python packages: `numpy, pickle, tqdm, imagehash, hashlib, PIL, keras, tensorflow`
 
 Pipeline roughly does the following:
 
@@ -13,7 +20,8 @@ Pipeline roughly does the following:
     7 - applies a clustering algorithm on fingerprints of cropped images
     8 - plots all members of all clusters into a jpg file and saves results
 
-## Some results
+Results
+=====
 
 ![graphic](assets/america.jpg)
 ![graphic](assets/drake.jpg)
