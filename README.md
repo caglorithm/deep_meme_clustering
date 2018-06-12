@@ -8,7 +8,11 @@ Core code is based on https://github.com/elcorto/imagecluster
 
 Usage
 =====
-Depends these python packages: `numpy, pickle, tqdm, imagehash, hashlib, PIL, keras, tensorflow`
+Runs on python 3.6
+
+IF you don't know anything about programming and you have installed all the depencies, you can go into `pipeline.py` and change the `imagedir` directory to where your meme stash is and run the script on the terminal using the command `python pipeline.py` and hope for the best.
+
+Depends these python packages: `numpy, scipy, sklean, pyplot, pickle, tqdm, imagehash, hashlib, PIL, keras, tensorflow`. I know that these are a lot but since this is in development, there are probably some dependencies I will get rid of along the way. 
 
 Pipeline roughly does the following:
 
@@ -22,7 +26,6 @@ Pipeline roughly does the following:
 
 Results
 =====
-
 ![graphic](assets/america.jpg)
 ![graphic](assets/drake.jpg)
 ![graphic](assets/isthis.jpg)
