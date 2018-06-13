@@ -112,22 +112,24 @@ def process_dataset(imagedir, modelname = 'ResNet50', input_size = 224):
 
 
 def cluster(df, dbfn):
+	print("> Clustering ...")
 	fingerprint_column = 'cropped_fingerprints'
+	sim = 0.5
 
 	fingerprintdict = df.set_index('filename')[fingerprint_column].to_dict()
 	# cluster and save files in folders
-	ic.make_links(ic.cluster(fingerprintdict, 0.6), os.path.join(imagedir, ic_base_dir, 'clusters'))
+	ic.make_links(ic.cluster(fingerprintdict, sim), os.path.join(imagedir, ic_base_dir, 'clusters'))
 
 	# cluster and save results in dataframe
 	fps = df[fingerprint_column]
 	dfps = distance.pdist(np.array(list(fps)), metric='euclidean')
-	sim = 0.6 
 	Z = hierarchy.linkage(dfps, method='average', metric='euclidean')
 	cut = hierarchy.fcluster(Z, t=dfps.max()*(1.0-sim), criterion='distance')
 	df['cluster'] = cut
 
 	# save database to file
 	co.write_pk(df, dbfn)
+	print("done.")
 
 def visualize_clusters(df):
 	# save results on disk as jpgs
@@ -144,7 +146,7 @@ def visualize_clusters(df):
 	        
 	        labels = list(clusterdf['labels'])
 	        #labels = [result[0] for result in [label[0] for label in clusterdf['labels']]]
-	        print(labels)
+	        #print(labels)
 	        
 	        clusterfile = os.path.join(clusterdir, str(clustersize) + '_' + str(nclust) + '.jpg')
 	        plotfiles(list(clusterdf['filename']), plot=False, filename=clusterfile)
