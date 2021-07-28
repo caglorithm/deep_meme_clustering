@@ -98,9 +98,6 @@ def process_dataset(imagedir, modelname='ResNet50', input_size=224):
     df = co.crop_images(df, imagedir, input_size)
     print("done.")
 
-    # files may have been dropped in crop_images, which is why we update the files object again
-    files = df["filename"]
-
     print("> Loading Keras model {}".format(modelname))
     model, getFingerprint = ph.get_model(modelname=modelname)
     # construct fingerprint model (second to last layer)
@@ -110,6 +107,8 @@ def process_dataset(imagedir, modelname='ResNet50', input_size=224):
     print("done.")
 
     print("> Running images through DNN {}".format(modelname))
+    # files may have been dropped in crop_images, which is why we update the files object again
+    files = df["filename"]
     # get fingerprints
     fps, preds, labels = ph.fingerprints(files, model, getFingerprint, size=(
         input_size, input_size), modelname=modelname)
@@ -117,6 +116,7 @@ def process_dataset(imagedir, modelname='ResNet50', input_size=224):
     df['labels'] = labels
 
     print("> Running CROPPED images through DNN {}".format(modelname))
+    files = df["cropped_filename"]
     # get fingerprints
     cfps, cpreds, clabels = ph.fingerprints(files, model, getFingerprint, size=(
         input_size, input_size), modelname=modelname)
