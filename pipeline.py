@@ -24,6 +24,7 @@ input_size = 224
 importlib.reload(ic)
 
 imagedir = './data/'
+imagedir = '/Users/caglar/Downloads/Web/victor_memes/imgs_all/'
 
 
 def main():
@@ -60,19 +61,18 @@ def process_dataset(imagedir, modelname='ResNet50', input_size=224):
     """
     processes a list of files (filenames) 
 
-    1 - calculates sha256 hash (old: and renames files to hash)
-    2 - crops out image from meme and copies into ./cropped/
-    3 - calculates phash using the imagehash library
+    1 - calculates sha256 hash
+    2 - crops out whitespace and text from memes and copies into ./cropped/
+    3 - calculates phash using the imagehash library (not necessary)
     4 - calculates DNN fingerprint using keras and tensorflow
     6 - does the same for cropped versions
     7 - applies a clustering algorithm on DNN fingerprints of cropped images
     8 - plots all members of all clusters into a jpg file and saves results
-
-    - returns a pandas dataframe with the information
+    9 - saves all results into a csv file
     """
     files = co.get_files(imagedir)
-    print("> Renaming {} files (to sha256 hash)".format(len(files)))
 
+    print("> sha256-hashing {} files...".format(len(files)))
     # old function that renamed all files
     #files, hashes = co.rename_files(files, imagedir)
     # get hashes without renaming
@@ -83,15 +83,16 @@ def process_dataset(imagedir, modelname='ResNet50', input_size=224):
     print("done.")
 
     # create pandas dataframe containing all data
-    df = pd.DataFrame(index=hashes)
-    df['filename'] = files
-    df['name'] = names
-    df['hash'] = hashes
+    df = pd.DataFrame(index=hashes, data={
+                      "filename": files, "name": names, "hash": hashes})
 
-    print("> Phashing {} files".format(len(files)))
-    phashes = ph.return_phashes(files)
-    df['phash'] = phashes
-    print("done.")
+    # remove duplicates from df
+    df = df.drop_duplicates(subset='hash')  # lol thanks :D
+
+    # print("> Phashing {} files".format(len(files)))
+    # phashes = ph.return_phashes(files)
+    # df['phash'] = phashes
+    # print("done.")
 
     print("> Cropping and copying all images")
     df = co.crop_images(df, imagedir, input_size)

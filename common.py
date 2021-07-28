@@ -62,8 +62,8 @@ def crop_images(df, imagedir, size):
     if 'cropped_filename' not in df:
         df['cropped_filename'] = None
     for file in tqdm(df.index, total=len(df.index)):
-        original_filename = df.loc[file]['filename']
         try:
+            original_filename = df.loc[file]['filename']
             pil_img = Image.open(original_filename)
             pil_img = pil_img.convert('RGB')
 
@@ -91,13 +91,12 @@ def crop_images(df, imagedir, size):
             pil_img = pil_img.crop(
                 (croplines_x[0], croplines_y[0], croplines_x[1], croplines_y[1]))
             pil_img.save(cropped_fname)
+            df.loc[file]['cropped_filename'] = cropped_fname
         except:
             print("Couldn't crop {}, dropping file from table".format(
-                original_filename))
+                file))
             df = df.drop(file)
             continue
-
-        df.loc[file]['cropped_filename'] = cropped_fname
 
         # plt.imshow(pil_img)
         # plt.show()
