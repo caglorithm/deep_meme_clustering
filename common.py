@@ -91,7 +91,7 @@ def crop_images(df, imagedir, size):
             pil_img = pil_img.crop(
                 (croplines_x[0], croplines_y[0], croplines_x[1], croplines_y[1]))
             pil_img.save(cropped_fname)
-            df.loc[file]['cropped_filename'] = cropped_fname
+            df.loc[file, 'cropped_filename'] = cropped_fname
         except:
             print("Couldn't crop {}, dropping file from table".format(
                 file))
