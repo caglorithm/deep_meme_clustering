@@ -17,8 +17,8 @@ from keras.applications.vgg19 import preprocess_input as preprocess_input_vgg19
 from keras.applications.inception_v3 import InceptionV3
 from keras.applications.inception_v3 import preprocess_input as preprocess_input_InceptionV3
 
-from keras.applications.resnet50 import preprocess_input as preprocess_input_ResNet50
-from keras.applications.resnet50 import ResNet50
+from tensorflow.keras.applications.resnet50 import preprocess_input as preprocess_input_ResNet50
+from tensorflow.keras.applications.resnet50 import ResNet50
 
 
 from keras.models import Model

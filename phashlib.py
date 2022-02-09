@@ -5,9 +5,9 @@ import numpy as np
 
 from PIL import Image
 
-from keras.applications.resnet50 import preprocess_input
-from keras.applications.resnet50 import ResNet50
-from keras.applications.resnet50 import decode_predictions
+from tensorflow.keras.applications.resnet50 import preprocess_input
+from tensorflow.keras.applications.resnet50 import ResNet50
+from tensorflow.keras.applications.resnet50 import decode_predictions
 from keras import backend as K
 from keras.preprocessing import image as image
 

@@ -2,6 +2,7 @@ import importlib
 import pandas as pd
 import numpy as np
 import os
+import json
 import re
 
 import imagecluster as ic
@@ -120,6 +121,7 @@ def process_dataset(imagedir, modelname='ResNet50', input_size=224):
     # get fingerprints
     cfps, cpreds, clabels = ph.fingerprints(files, model, getFingerprint, size=(
         input_size, input_size), modelname=modelname)
+    np.set_printoptions(threshold=np.inf)
     df['cropped_fingerprints'] = cfps
     df['cropped_labels'] = clabels
 
