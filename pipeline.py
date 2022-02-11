@@ -25,13 +25,13 @@ input_size = 224
 importlib.reload(ic)
 
 imagedir = './data/'
-imagedir = '/Users/caglar/Downloads/Web/victor_memes/imgs_all/'
+# imagedir = '/Users/caglar/Downloads/Web/victor_memes/imgs_all/'
 
 
 def main():
     df, dbfn = init_df()
     df = cluster(df, dbfn)
-    visualize_clusters(df)
+    # visualize_clusters(df)
 
 
 def init_df():
@@ -111,17 +111,16 @@ def process_dataset(imagedir, modelname='ResNet50', input_size=224):
     # files may have been dropped in crop_images, which is why we update the files object again
     files = df["filename"]
     # get fingerprints
-    fps, preds, labels = ph.fingerprints(files, model, getFingerprint, size=(
-        input_size, input_size), modelname=modelname)
-    df['fingerprints'] = fps
-    df['labels'] = labels
+    # fps, preds, labels = ph.fingerprints(files, model, getFingerprint, size=(
+    #     input_size, input_size), modelname=modelname)
+    # df['fingerprints'] = fps
+    # df['labels'] = labels
 
     print("> Running CROPPED images through DNN {}".format(modelname))
     files = df["cropped_filename"]
     # get fingerprints
     cfps, cpreds, clabels = ph.fingerprints(files, model, getFingerprint, size=(
         input_size, input_size), modelname=modelname)
-    np.set_printoptions(threshold=np.inf)
     df['cropped_fingerprints'] = cfps
     df['cropped_labels'] = clabels
 
@@ -133,19 +132,32 @@ def process_dataset(imagedir, modelname='ResNet50', input_size=224):
 def cluster(df, dbfn):
     print("> Clustering ...")
     fingerprint_column = 'cropped_fingerprints'
-    sim = 0.5
+    sim = 0.65
 
     fingerprintdict = df.set_index('filename')[fingerprint_column].to_dict()
     # cluster and save files in folders
-    ic.make_links(ic.cluster(fingerprintdict, sim),
+    cluster_results = ic.cluster(fingerprintdict, sim)
+    ic.make_links(cluster_results,
                   os.path.join(imagedir, ic_base_dir, 'clusters'))
+    
+    cluster_count = 0
+    for cluster in cluster_results:
+        vector_sum = []
+        for filename in cluster:
+            fp = df.loc[df['filename'] == filename][fingerprint_column][0]
+            if len(vector_sum) == 0:
+                vector_sum = np.array(fp)
+            else:
+                vector_sum += np.array(fp)
+            
+        cluster_center = vector_sum / len(cluster)
 
-    # cluster and save results in dataframe
-    fps = df[fingerprint_column]
-    dfps = distance.pdist(np.array(list(fps)), metric='euclidean')
-    Z = hierarchy.linkage(dfps, method='average', metric='euclidean')
-    cut = hierarchy.fcluster(Z, t=dfps.max()*(1.0-sim), criterion='distance')
-    df['cluster'] = cut
+        cluster_count += 1
+        for filename in cluster:
+            fp = df.loc[df['filename'] == filename, fingerprint_column][0]
+            df.loc[df['filename'] == filename, 'cluster'] = cluster_count
+            img_distance = distance.euclidean(cluster_center, np.array(fp))
+            df.loc[df['filename'] == filename, 'distance'] = img_distance
 
     # save database to file
     co.write_pk(df, dbfn)
